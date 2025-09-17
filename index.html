@@ -90,6 +90,87 @@
                 --tw-ring-offset-color: #f8fafc;
             }
         }
+        
+        /* Phone mockup styles */
+        .phone-mockup {
+            perspective: 1000px;
+        }
+        
+        .phone-body {
+            width: 280px;
+            height: 560px;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        .phone-screen {
+            width: calc(100% - 16px);
+            height: calc(100% - 16px);
+            margin: 8px;
+        }
+        
+        /* Phone glow effect */
+        .phone-glow {
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.1) 40%, transparent 70%);
+            filter: blur(20px);
+            animation: glow-pulse 4s ease-in-out infinite alternate;
+        }
+        
+        /* Float animation */
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotateY(-5deg);
+            }
+            50% {
+                transform: translateY(-20px) rotateY(-5deg);
+            }
+        }
+        
+        /* Glow pulse animation */
+        @keyframes glow-pulse {
+            0% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+        
+        /* Starfield canvas background */
+        .starfield-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        /* Radial gradient background matching Kotlin implementation */
+        .cosmic-background {
+            background: radial-gradient(ellipse at center, 
+                #4A448C 0%,     /* Brighter, warm purple center */
+                #2C2A64 50%,    /* Mid-tone deep indigo */
+                #1A183E 100%    /* Dark purple/blue edge */
+            );
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .phone-body {
+                animation: none;
+            }
+            .phone-glow {
+                animation: none;
+                opacity: 0.6;
+            }
+            .starfield-canvas {
+                animation: none;
+            }
+        }
     </style>
     
     <!-- Fallback CSS for CDN failures -->
@@ -141,8 +222,206 @@
         "url": "https://rabelson97.github.io/Orbital-Support/"
     }
     </script>
+    
+    <!-- Starfield JavaScript -->
+    <script>
+        // Starfield implementation based on Kotlin StarfieldBackground
+        class StarfieldBackground {
+            constructor(canvasId, totalFocusDays = 1) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.totalFocusDays = totalFocusDays;
+                this.animationId = null;
+                this.startTime = Date.now();
+                this.warmedUp = false;
+                
+                // Star types
+                this.StarType = {
+                    DOT: 'dot',
+                    CROSS: 'cross'
+                };
+                
+                // Colors matching Kotlin implementation
+                this.starColor = '#E6E2FF';
+                
+                this.init();
+            }
+            
+            calculateVisualStarCount(totalDays) {
+                if (totalDays <= 1) return 50;
+                const baseStars = 50;
+                const scaleFactor = 85;
+                const starCount = baseStars + Math.floor(scaleFactor * Math.log(totalDays));
+                return Math.min(starCount, 1500);
+            }
+            
+            generateStars() {
+                const visualStarCount = this.calculateVisualStarCount(this.totalFocusDays);
+                this.stars = [];
+                
+                for (let i = 0; i < Math.max(visualStarCount, 1); i++) {
+                    const type = Math.random() < 0.1 ? this.StarType.CROSS : this.StarType.DOT;
+                    const alpha = type === this.StarType.CROSS 
+                        ? Math.random() * 0.3 + 0.7  // 0.7 to 1.0
+                        : Math.random() * 0.6 + 0.1; // 0.1 to 0.7
+                    
+                    this.stars.push({
+                        offset: {
+                            x: Math.random(),
+                            y: Math.random()
+                        },
+                        radius: Math.random() * 1.5 + 1,
+                        alpha: alpha,
+                        type: type,
+                        parallaxFactor: Math.max(0.2, Math.min(1.0, alpha))
+                    });
+                }
+            }
+            
+            init() {
+                this.resizeCanvas();
+                this.generateStars();
+                
+                // Warm-up delay matching Kotlin implementation
+                setTimeout(() => {
+                    this.warmedUp = true;
+                }, 700);
+                
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                const rect = this.canvas.getBoundingClientRect();
+                this.canvas.width = rect.width * window.devicePixelRatio;
+                this.canvas.height = rect.height * window.devicePixelRatio;
+                this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = rect.height + 'px';
+            }
+            
+            animate() {
+                const currentTime = Date.now();
+                const elapsed = (currentTime - this.startTime) / 1000;
+                
+                // Animation offset matching 50-second cycle from Kotlin
+                const animationOffset = (elapsed / 50) % 1;
+                
+                this.draw(animationOffset);
+                
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    this.animationId = requestAnimationFrame(() => this.animate());
+                }
+            }
+            
+            draw(animationOffset) {
+                const rect = this.canvas.getBoundingClientRect();
+                const width = rect.width;
+                const height = rect.height;
+                
+                this.ctx.clearRect(0, 0, width, height);
+                
+                const baseScrollX = width * animationOffset;
+                const baseScrollY = height * animationOffset / 10;
+                
+                // Early cap during warm-up period
+                const earlyCap = 300;
+                const starsToRender = this.warmedUp ? this.stars : this.stars.slice(0, Math.max(earlyCap, 1));
+                
+                starsToRender.forEach(star => {
+                    const scrollX = baseScrollX * star.parallaxFactor;
+                    const scrollY = baseScrollY * star.parallaxFactor;
+                    const x = (star.offset.x * width + scrollX) % width;
+                    const y = (star.offset.y * height + scrollY) % height;
+                    
+                    // Only draw if within visible area with buffer
+                    if (x > -star.radius && x < width + star.radius &&
+                        y > -star.radius && y < height + star.radius) {
+                        
+                        const finalX = x % width;
+                        const finalY = y % height;
+                        
+                        this.drawStar(star, finalX, finalY);
+                    }
+                });
+            }
+            
+            drawStar(star, x, y) {
+                this.ctx.globalAlpha = star.alpha;
+                
+                if (star.type === this.StarType.DOT) {
+                    this.ctx.fillStyle = this.starColor;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, star.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                } else if (star.type === this.StarType.CROSS) {
+                    if (!this.warmedUp) {
+                        // Draw as dot during warm-up
+                        this.ctx.fillStyle = this.starColor;
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, star.radius, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    } else {
+                        // Draw cross with glow
+                        const glowLength = star.radius * 6;
+                        
+                        // Core circle
+                        this.ctx.fillStyle = this.starColor;
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, star.radius * 1.2, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        
+                        // Cross lines with gradient effect
+                        this.ctx.strokeStyle = this.starColor;
+                        this.ctx.lineWidth = star.radius * 0.8;
+                        this.ctx.lineCap = 'round';
+                        
+                        // Create gradient for glow effect
+                        const gradient1 = this.ctx.createLinearGradient(x - glowLength, y, x + glowLength, y);
+                        gradient1.addColorStop(0, 'transparent');
+                        gradient1.addColorStop(0.5, this.starColor);
+                        gradient1.addColorStop(1, 'transparent');
+                        
+                        const gradient2 = this.ctx.createLinearGradient(x, y - glowLength, x, y + glowLength);
+                        gradient2.addColorStop(0, 'transparent');
+                        gradient2.addColorStop(0.5, this.starColor);
+                        gradient2.addColorStop(1, 'transparent');
+                        
+                        // Horizontal line
+                        this.ctx.strokeStyle = gradient1;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x - glowLength, y);
+                        this.ctx.lineTo(x + glowLength, y);
+                        this.ctx.stroke();
+                        
+                        // Vertical line
+                        this.ctx.strokeStyle = gradient2;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x, y - glowLength);
+                        this.ctx.lineTo(x, y + glowLength);
+                        this.ctx.stroke();
+                    }
+                }
+                
+                this.ctx.globalAlpha = 1;
+            }
+            
+            destroy() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                window.removeEventListener('resize', this.resizeCanvas);
+            }
+        }
+        
+        // Initialize starfield when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Use a focus day count that gives a nice star density for the landing page
+            const starfield = new StarfieldBackground('starfield', 7);
+        });
+    </script>
 </head>
-<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white font-system">
+<body class="text-white font-system" style="background: #1A183E;">
     <!-- Navigation Header -->
     <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-purple-800/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -212,10 +491,71 @@
         </div>
     </nav>
     
-    <!-- Placeholder content for structure verification -->
-    <div class="min-h-screen">
-        <h1 class="text-4xl font-bold text-center py-20">Orbital Landing Page</h1>
-        <p class="text-center text-gray-300">Navigation header implemented</p>
-    </div>
+    <!-- Hero Section -->
+    <main class="relative min-h-screen flex items-center">
+        <!-- Cosmic background with starfield -->
+        <div class="absolute inset-0 cosmic-background">
+            <canvas id="starfield" class="starfield-canvas"></canvas>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid lg:grid-cols-5 gap-12 items-center">
+                <!-- Left Column - Content (60% on desktop) -->
+                <div class="lg:col-span-3 text-center lg:text-left">
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
+                            Build worlds.
+                        </span>
+                        <br>
+                        <span class="text-white">
+                            One focused minute at a time.
+                        </span>
+                    </h1>
+                    
+                    <!-- Subcopy -->
+                    <p class="text-xl sm:text-2xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Transform your focus sessions into a cosmic journey. Watch unique planets form as you concentrate, building your personal solar system one distraction-free moment at a time.
+                    </p>
+                    
+                    <!-- Store badges placeholder for next task -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+                        <!-- Store badges will be added in task 4 -->
+                    </div>
+                    
+                    <!-- Secondary CTA placeholder for next task -->
+                    <div class="text-center lg:text-left">
+                        <!-- Secondary CTA will be added in task 4 -->
+                    </div>
+                </div>
+                
+                <!-- Right Column - Phone Mockup (40% on desktop) -->
+                <div class="lg:col-span-2 flex justify-center lg:justify-end">
+                    <div class="phone-mockup">
+                        <!-- Phone frame -->
+                        <div class="relative">
+                            <!-- Phone body -->
+                            <div class="phone-body bg-gradient-to-b from-slate-800 to-slate-900 rounded-[2rem] p-2 shadow-2xl">
+                                <!-- Screen -->
+                                <div class="phone-screen bg-black rounded-[1.5rem] overflow-hidden relative">
+                                    <!-- Solar system screenshot -->
+                                    <img src="assets/solar-system.png" 
+                                         alt="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings against deep space background"
+                                         class="w-full h-full object-cover"
+                                         loading="eager">
+                                    
+                                    <!-- Screen overlay for realism -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 pointer-events-none"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone glow effect -->
+                            <div class="phone-glow absolute inset-0 rounded-[2rem] pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

@@ -7,7 +7,7 @@
   - Add favicon placeholder and basic SEO meta tags
   - _Requirements: 4.1, 4.6, 5.8_
 
-- [ ] 2. Implement navigation header component
+- [x] 2. Implement navigation header component
   - Create sticky navigation bar with backdrop blur effect
   - Add Orbital logo text with proper typography
   - Implement navigation links (Support, Privacy, Terms) with correct URLs
@@ -15,7 +15,7 @@
   - Ensure proper focus states and hover effects for accessibility
   - _Requirements: 1.2, 3.1, 4.5, 5.1, 5.2, 5.3_
 
-- [ ] 3. Build hero section layout and content
+- [x] 3. Build hero section layout and content
   - Create two-column responsive layout (60/40 split desktop, stacked mobile)
   - Implement headline "Build worlds. One focused minute at a time." with proper typography
   - Add explanatory subcopy about distraction-free focus and planet generation
