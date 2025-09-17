@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Transform focus sessions into a cosmic journey. Build unique planets every 5 minutes, track progress, and stay distraction-free with Orbital.">
+    <meta name="keywords" content="focus app, productivity, planet generation, distraction-free, cosmic, orbital">
+    <meta name="author" content="Orbital Focus">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Orbital — Focus that builds worlds">
+    <meta property="og:description" content="Transform focus sessions into a cosmic journey. Build unique planets every 5 minutes, track progress, and stay distraction-free with Orbital.">
+    <meta property="og:image" content="assets/og-hero.png">
+    <meta property="og:url" content="https://rabelson97.github.io/Orbital-Support/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Orbital Focus">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Orbital — Focus that builds worlds">
+    <meta name="twitter:description" content="Transform focus sessions into a cosmic journey. Build unique planets every 5 minutes, track progress, and stay distraction-free with Orbital.">
+    <meta name="twitter:image" content="assets/og-hero.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://rabelson97.github.io/Orbital-Support/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="assets/solar-system-web.mp4" as="video">
+    <link rel="preload" href="assets/solar-system.png" as="image">
+    
+    <title>Orbital — Focus that builds worlds</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-space': '#1e1b4b',
+                        'cosmic-purple': '#312e81',
+                        'nebula-blue': '#6366f1'
+                    },
+                    fontFamily: {
+                        'system': ['-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        'playfair': ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS for mobile menu functionality -->
+    <style>
+        /* CSS-only mobile menu toggle */
+        #mobile-menu-toggle:checked ~ label svg:first-child {
+            display: none;
+        }
+        #mobile-menu-toggle:checked ~ label svg:last-child {
+            display: block;
+        }
+        #mobile-menu-toggle:not(:checked) ~ label svg:last-child {
+            display: none;
+        }
+        #mobile-menu-toggle:checked ~ div {
+            display: block !important;
+        }
+        
+        /* Smooth backdrop blur support */
+        @supports (backdrop-filter: blur(12px)) {
+            .backdrop-blur-md {
+                backdrop-filter: blur(12px);
+            }
+        }
+        
+        /* Fallback for browsers without backdrop-filter */
+        @supports not (backdrop-filter: blur(12px)) {
+            .backdrop-blur-md {
+                background-color: rgba(15, 23, 42, 0.9);
+            }
+        }
+        
+        /* Ensure focus states are visible in both light and dark modes */
+        @media (prefers-color-scheme: light) {
+            .focus\:ring-offset-slate-900 {
+                --tw-ring-offset-color: #f8fafc;
+            }
+        }
+        
+        /* Phone mockup styles */
+        .phone-mockup {
+            perspective: none;
+        }
+        
+        .phone-body {
+            width: 280px;
+            height: 607px;
+            position: relative;
+            transform: none;
+            border: 3px solid #1f2937;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .phone-screen {
+            width: calc(100% - 8px);
+            height: calc(100% - 8px);
+            margin: 4px;
+        }
+        
+        /* Notch removed for cleaner video display */
+        
+        /* Home indicator */
+        .phone-home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2.5px;
+            z-index: 10;
+        }
+        
+        /* Phone glow effect */
+        .phone-glow {
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.1) 40%, transparent 70%);
+            filter: blur(20px);
+            opacity: 0.6;
+        }
+        
+        /* Removed animations for static display */
+        
+        /* Starfield canvas background */
+        .starfield-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        /* Radial gradient background matching Kotlin implementation */
+        .cosmic-background {
+            background: radial-gradient(ellipse at center, 
+                #4A448C 0%,     /* Brighter, warm purple center */
+                #2C2A64 50%,    /* Mid-tone deep indigo */
+                #1A183E 100%    /* Dark purple/blue edge */
+            );
+        }
+        
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            .starfield-canvas {
+                animation: none;
+            }
+        }
+    </style>
+    
+    <!-- Fallback CSS for CDN failures -->
+    <noscript>
+        <style>
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+                margin: 0; 
+                padding: 0; 
+                background-color: #1e1b4b;
+                color: white;
+            }
+            .container { 
+                max-width: 1200px; 
+                margin: 0 auto; 
+                padding: 20px;
+            }
+            .nav { 
+                display: flex; 
+                justify-content: space-between; 
+                padding: 1rem 0; 
+                border-bottom: 1px solid #312e81;
+            }
+            .hero {
+                text-align: center;
+                padding: 4rem 0;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+        </style>
+    </noscript>
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Orbital Focus",
+        "description": "Transform focus sessions into a cosmic journey. Build unique planets every 5 minutes, track progress, and stay distraction-free with Orbital.",
+        "operatingSystem": ["iOS", "Android"],
+        "applicationCategory": "ProductivityApplication",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "url": "https://rabelson97.github.io/Orbital-Support/"
+    }
+    </script>
+    
+    <!-- Starfield JavaScript -->
+    <script>
+        // Starfield implementation based on Kotlin StarfieldBackground
+        class StarfieldBackground {
+            constructor(canvasId, totalFocusDays = 1) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.totalFocusDays = totalFocusDays;
+                this.animationId = null;
+                this.startTime = Date.now();
+                this.warmedUp = false;
+                
+                // Star types
+                this.StarType = {
+                    DOT: 'dot',
+                    CROSS: 'cross'
+                };
+                
+                // Colors matching Kotlin implementation
+                this.starColor = '#E6E2FF';
+                
+                this.init();
+            }
+            
+            calculateVisualStarCount(totalDays) {
+                if (totalDays <= 1) return 50;
+                const baseStars = 50;
+                const scaleFactor = 85;
+                const starCount = baseStars + Math.floor(scaleFactor * Math.log(totalDays));
+                return Math.min(starCount, 1500);
+            }
+            
+            generateStars() {
+                const visualStarCount = this.calculateVisualStarCount(this.totalFocusDays);
+                this.stars = [];
+                
+                for (let i = 0; i < Math.max(visualStarCount, 1); i++) {
+                    const type = Math.random() < 0.1 ? this.StarType.CROSS : this.StarType.DOT;
+                    const alpha = type === this.StarType.CROSS 
+                        ? Math.random() * 0.3 + 0.7  // 0.7 to 1.0
+                        : Math.random() * 0.6 + 0.1; // 0.1 to 0.7
+                    
+                    this.stars.push({
+                        offset: {
+                            x: Math.random(),
+                            y: Math.random()
+                        },
+                        radius: Math.random() * 1.5 + 1,
+                        alpha: alpha,
+                        type: type,
+                        parallaxFactor: Math.max(0.2, Math.min(1.0, alpha))
+                    });
+                }
+            }
+            
+            init() {
+                this.resizeCanvas();
+                this.generateStars();
+                
+                // Warm-up delay matching Kotlin implementation
+                setTimeout(() => {
+                    this.warmedUp = true;
+                }, 700);
+                
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                const rect = this.canvas.getBoundingClientRect();
+                this.canvas.width = rect.width * window.devicePixelRatio;
+                this.canvas.height = rect.height * window.devicePixelRatio;
+                this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                this.canvas.style.width = rect.width + 'px';
+                this.canvas.style.height = rect.height + 'px';
+            }
+            
+            animate() {
+                const currentTime = Date.now();
+                const elapsed = (currentTime - this.startTime) / 1000;
+                
+                // Animation offset matching 50-second cycle from Kotlin
+                const animationOffset = (elapsed / 50) % 1;
+                
+                this.draw(animationOffset);
+                
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    this.animationId = requestAnimationFrame(() => this.animate());
+                }
+            }
+            
+            draw(animationOffset) {
+                const rect = this.canvas.getBoundingClientRect();
+                const width = rect.width;
+                const height = rect.height;
+                
+                this.ctx.clearRect(0, 0, width, height);
+                
+                const baseScrollX = width * animationOffset;
+                const baseScrollY = height * animationOffset / 10;
+                
+                // Early cap during warm-up period
+                const earlyCap = 300;
+                const starsToRender = this.warmedUp ? this.stars : this.stars.slice(0, Math.max(earlyCap, 1));
+                
+                starsToRender.forEach(star => {
+                    const scrollX = baseScrollX * star.parallaxFactor;
+                    const scrollY = baseScrollY * star.parallaxFactor;
+                    const x = (star.offset.x * width + scrollX) % width;
+                    const y = (star.offset.y * height + scrollY) % height;
+                    
+                    // Only draw if within visible area with buffer
+                    if (x > -star.radius && x < width + star.radius &&
+                        y > -star.radius && y < height + star.radius) {
+                        
+                        const finalX = x % width;
+                        const finalY = y % height;
+                        
+                        this.drawStar(star, finalX, finalY);
+                    }
+                });
+            }
+            
+            drawStar(star, x, y) {
+                this.ctx.globalAlpha = star.alpha;
+                
+                if (star.type === this.StarType.DOT) {
+                    this.ctx.fillStyle = this.starColor;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, star.radius, 0, Math.PI * 2);
+                    this.ctx.fill();
+                } else if (star.type === this.StarType.CROSS) {
+                    if (!this.warmedUp) {
+                        // Draw as dot during warm-up
+                        this.ctx.fillStyle = this.starColor;
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, star.radius, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    } else {
+                        // Draw cross with glow
+                        const glowLength = star.radius * 6;
+                        
+                        // Core circle
+                        this.ctx.fillStyle = this.starColor;
+                        this.ctx.beginPath();
+                        this.ctx.arc(x, y, star.radius * 1.2, 0, Math.PI * 2);
+                        this.ctx.fill();
+                        
+                        // Cross lines with gradient effect
+                        this.ctx.strokeStyle = this.starColor;
+                        this.ctx.lineWidth = star.radius * 0.8;
+                        this.ctx.lineCap = 'round';
+                        
+                        // Create gradient for glow effect
+                        const gradient1 = this.ctx.createLinearGradient(x - glowLength, y, x + glowLength, y);
+                        gradient1.addColorStop(0, 'transparent');
+                        gradient1.addColorStop(0.5, this.starColor);
+                        gradient1.addColorStop(1, 'transparent');
+                        
+                        const gradient2 = this.ctx.createLinearGradient(x, y - glowLength, x, y + glowLength);
+                        gradient2.addColorStop(0, 'transparent');
+                        gradient2.addColorStop(0.5, this.starColor);
+                        gradient2.addColorStop(1, 'transparent');
+                        
+                        // Horizontal line
+                        this.ctx.strokeStyle = gradient1;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x - glowLength, y);
+                        this.ctx.lineTo(x + glowLength, y);
+                        this.ctx.stroke();
+                        
+                        // Vertical line
+                        this.ctx.strokeStyle = gradient2;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(x, y - glowLength);
+                        this.ctx.lineTo(x, y + glowLength);
+                        this.ctx.stroke();
+                    }
+                }
+                
+                this.ctx.globalAlpha = 1;
+            }
+            
+            destroy() {
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                window.removeEventListener('resize', this.resizeCanvas);
+            }
+        }
+        
+        // Initialize starfield when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Use a focus day count that gives a nice star density for the landing page
+            const starfield = new StarfieldBackground('starfield', 7);
+        });
+    </script>
+</head>
+<body class="text-white font-playfair" style="background: #1A183E;">
+    <!-- Navigation Header -->
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-purple-800/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-white tracking-wide">Orbital</h1>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="https://rabelson97.github.io/Orbital-Support/support.html" 
+                       class="text-gray-300 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+                       aria-label="Visit Support page">
+                        Support
+                    </a>
+                    <a href="https://rabelson97.github.io/Orbital-Support/support.html#privacy" 
+                       class="text-gray-300 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+                       aria-label="View Privacy Policy">
+                        Privacy
+                    </a>
+                    <a href="https://rabelson97.github.io/Orbital-Support/support.html#terms" 
+                       class="text-gray-300 hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+                       aria-label="View Terms of Use">
+                        Terms
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <input type="checkbox" id="mobile-menu-toggle" class="hidden peer">
+                    <label for="mobile-menu-toggle" 
+                           class="cursor-pointer p-2 rounded-md text-gray-300 hover:text-white hover:bg-slate-800/50 transition-colors duration-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-purple-500 focus-within:ring-offset-2 focus-within:ring-offset-slate-900"
+                           aria-label="Toggle mobile navigation menu">
+                        <!-- Hamburger icon -->
+                        <svg class="w-6 h-6 peer-checked:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <!-- Close icon -->
+                        <svg class="w-6 h-6 hidden peer-checked:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </label>
+                    
+                    <!-- Mobile menu -->
+                    <div class="hidden peer-checked:block absolute top-16 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-b border-purple-800/20 shadow-lg">
+                        <div class="px-4 py-4 space-y-3">
+                            <a href="https://rabelson97.github.io/Orbital-Support/support.html" 
+                               class="block text-gray-300 hover:text-white hover:bg-slate-800/50 transition-colors duration-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                               aria-label="Visit Support page">
+                                Support
+                            </a>
+                            <a href="https://rabelson97.github.io/Orbital-Support/support.html#privacy" 
+                               class="block text-gray-300 hover:text-white hover:bg-slate-800/50 transition-colors duration-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                               aria-label="View Privacy Policy">
+                                Privacy
+                            </a>
+                            <a href="https://rabelson97.github.io/Orbital-Support/support.html#terms" 
+                               class="block text-gray-300 hover:text-white hover:bg-slate-800/50 transition-colors duration-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                               aria-label="View Terms of Use">
+                                Terms
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <main class="relative min-h-screen flex items-center">
+        <!-- Cosmic background with starfield -->
+        <div class="absolute inset-0 cosmic-background">
+            <canvas id="starfield" class="starfield-canvas"></canvas>
+        </div>
+        
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid lg:grid-cols-5 gap-12 items-center">
+                <!-- Left Column - Content (60% on desktop) -->
+                <div class="lg:col-span-3 text-center lg:text-left">
+                    <!-- Main Headline -->
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                        <span class="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
+                            Turn focus into galaxies.
+                        </span>
+                    </h1>
+                    
+                    <!-- Subcopy -->
+                    <p class="text-xl sm:text-2xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Stay present, block distractions, and watch planets form — your productivity becomes a universe in motion.
+                    </p>
+                    
+                    <!-- Store badges -->
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+                        <!-- App Store Badge (First per Apple guidelines) -->
+                        <a href="#" 
+                           class="inline-block transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 opacity-75 cursor-not-allowed"
+                           aria-label="Download from App Store (Coming Soon)"
+                           tabindex="-1">
+                            <div class="w-[180px] h-[53px] bg-transparent">
+                                <img src="assets/app-store-badge.svg" 
+                                     alt="Download on the App Store" 
+                                     class="w-full h-full object-contain"
+                                     style="filter: none;">
+                            </div>
+                        </a>
+                        
+                        <!-- Google Play Badge -->
+                        <a href="https://play.google.com/store/apps/details?id=com.ra.orbital" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="inline-block transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                           aria-label="Download Orbital Focus from Google Play Store">
+                            <div class="w-[180px] h-[53px] bg-transparent">
+                                <img src="assets/play-store-badge.svg" 
+                                     alt="Get it on Google Play" 
+                                     class="w-full h-full object-contain">
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Secondary CTA -->
+                    <div class="text-center lg:text-left">
+                        <a href="https://rabelson97.github.io/Orbital-Support/support.html" 
+                           class="inline-flex items-center text-purple-300 hover:text-purple-200 transition-colors duration-200 font-medium text-lg group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+                           aria-label="Explore the Support Center for help and documentation">
+                            Explore the Support Center
+                            <svg class="ml-2 w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Right Column - Phone Mockup (40% on desktop) -->
+                <div class="lg:col-span-2 flex justify-center lg:justify-end">
+                    <div class="phone-mockup">
+                        <!-- Phone frame -->
+                        <div class="relative">
+                            <!-- Phone body -->
+                            <div class="phone-body bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2.5rem]">
+                                <!-- Notch removed for cleaner display -->
+                                
+                                <!-- Screen -->
+                                <div class="phone-screen bg-black rounded-[2.2rem] overflow-hidden relative">
+                                    <!-- Solar system animation -->
+                                    <video autoplay muted loop playsinline 
+                                           class="w-full h-full object-cover"
+                                           poster="assets/solar-system.png"
+                                           aria-label="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings spinning against deep space background">
+                                        <source src="assets/solar-system-web.mp4" type="video/mp4">
+                                        <source src="assets/solar-system.mov" type="video/quicktime">
+                                        <!-- Fallback image if video fails to load -->
+                                        <img src="assets/solar-system.png" 
+                                             alt="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings spinning against deep space background"
+                                             class="w-full h-full object-cover"
+                                             loading="eager">
+                                    </video>
+                                    
+                                    <!-- Screen overlay for realism -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 pointer-events-none"></div>
+                                </div>
+                                
+                                <!-- iPhone-style home indicator -->
+                                <div class="phone-home-indicator"></div>
+                            </div>
+                            </div>
+                            
+                            <!-- Phone glow effect -->
+                            <div class="phone-glow absolute inset-0 rounded-[2rem] pointer-events-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

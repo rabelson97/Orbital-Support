@@ -1,0 +1,13 @@
+# Assets directory
+This directory contains images and other assets for the Orbital landing page.
+
+## Required Assets:
+- solar-system.png: Screenshot of the app's solar system view (280px × 560px recommended)
+- og-hero.png: Open Graph image for social media sharing (1200px × 630px recommended)
+- favicon.ico: Website favicon
+- apple-touch-icon.png: Apple touch icon (180px × 180px)
+
+## Asset Optimization:
+- Use WebP format with JPEG fallbacks for better performance
+- Optimize images for web delivery
+- Include proper alt text for accessibility
