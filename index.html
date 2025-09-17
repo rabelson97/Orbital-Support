@@ -28,7 +28,13 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
     <!-- Preload critical assets -->
+    <link rel="preload" href="assets/solar-system-web.mp4" as="video">
     <link rel="preload" href="assets/solar-system.png" as="image">
     
     <title>Orbital — Focus that builds worlds</title>
@@ -47,7 +53,8 @@
                         'nebula-blue': '#6366f1'
                     },
                     fontFamily: {
-                        'system': ['-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+                        'system': ['-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        'playfair': ['Playfair Display', 'serif']
                     }
                 }
             }
@@ -93,51 +100,50 @@
         
         /* Phone mockup styles */
         .phone-mockup {
-            perspective: 1000px;
+            perspective: none;
         }
         
         .phone-body {
             width: 280px;
-            height: 560px;
+            height: 607px;
             position: relative;
-            animation: float 6s ease-in-out infinite;
-            transform-style: preserve-3d;
+            transform: none;
+            border: 3px solid #1f2937;
+            box-shadow: 
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 10px 20px rgba(0, 0, 0, 0.3);
         }
         
         .phone-screen {
-            width: calc(100% - 16px);
-            height: calc(100% - 16px);
-            margin: 8px;
+            width: calc(100% - 8px);
+            height: calc(100% - 8px);
+            margin: 4px;
+        }
+        
+        /* Notch removed for cleaner video display */
+        
+        /* Home indicator */
+        .phone-home-indicator {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 134px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2.5px;
+            z-index: 10;
         }
         
         /* Phone glow effect */
         .phone-glow {
             background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.3) 0%, rgba(99, 102, 241, 0.1) 40%, transparent 70%);
             filter: blur(20px);
-            animation: glow-pulse 4s ease-in-out infinite alternate;
+            opacity: 0.6;
         }
         
-        /* Float animation */
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px) rotateY(-5deg);
-            }
-            50% {
-                transform: translateY(-20px) rotateY(-5deg);
-            }
-        }
-        
-        /* Glow pulse animation */
-        @keyframes glow-pulse {
-            0% {
-                opacity: 0.5;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0.8;
-                transform: scale(1.05);
-            }
-        }
+        /* Removed animations for static display */
         
         /* Starfield canvas background */
         .starfield-canvas {
@@ -160,13 +166,6 @@
         
         /* Reduced motion support */
         @media (prefers-reduced-motion: reduce) {
-            .phone-body {
-                animation: none;
-            }
-            .phone-glow {
-                animation: none;
-                opacity: 0.6;
-            }
             .starfield-canvas {
                 animation: none;
             }
@@ -421,7 +420,7 @@
         });
     </script>
 </head>
-<body class="text-white font-system" style="background: #1A183E;">
+<body class="text-white font-playfair" style="background: #1A183E;">
     <!-- Navigation Header -->
     <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-purple-800/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -505,27 +504,54 @@
                     <!-- Main Headline -->
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                         <span class="bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent">
-                            Build worlds.
-                        </span>
-                        <br>
-                        <span class="text-white">
-                            One focused minute at a time.
+                            Turn focus into galaxies.
                         </span>
                     </h1>
                     
                     <!-- Subcopy -->
                     <p class="text-xl sm:text-2xl text-gray-300 leading-relaxed mb-8 max-w-2xl mx-auto lg:mx-0">
-                        Transform your focus sessions into a cosmic journey. Watch unique planets form as you concentrate, building your personal solar system one distraction-free moment at a time.
+                        Stay present, block distractions, and watch planets form — your productivity becomes a universe in motion.
                     </p>
                     
-                    <!-- Store badges placeholder for next task -->
+                    <!-- Store badges -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                        <!-- Store badges will be added in task 4 -->
+                        <!-- App Store Badge (First per Apple guidelines) -->
+                        <a href="#" 
+                           class="inline-block transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 opacity-75 cursor-not-allowed"
+                           aria-label="Download from App Store (Coming Soon)"
+                           tabindex="-1">
+                            <div class="w-[180px] h-[53px] bg-transparent">
+                                <img src="assets/app-store-badge.svg" 
+                                     alt="Download on the App Store" 
+                                     class="w-full h-full object-contain"
+                                     style="filter: none;">
+                            </div>
+                        </a>
+                        
+                        <!-- Google Play Badge -->
+                        <a href="https://play.google.com/store/apps/details?id=com.ra.orbital" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="inline-block transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                           aria-label="Download Orbital Focus from Google Play Store">
+                            <div class="w-[180px] h-[53px] bg-transparent">
+                                <img src="assets/play-store-badge.svg" 
+                                     alt="Get it on Google Play" 
+                                     class="w-full h-full object-contain">
+                            </div>
+                        </a>
                     </div>
                     
-                    <!-- Secondary CTA placeholder for next task -->
+                    <!-- Secondary CTA -->
                     <div class="text-center lg:text-left">
-                        <!-- Secondary CTA will be added in task 4 -->
+                        <a href="https://rabelson97.github.io/Orbital-Support/support.html" 
+                           class="inline-flex items-center text-purple-300 hover:text-purple-200 transition-colors duration-200 font-medium text-lg group focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 rounded-md px-2 py-1"
+                           aria-label="Explore the Support Center for help and documentation">
+                            Explore the Support Center
+                            <svg class="ml-2 w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </a>
                     </div>
                 </div>
                 
@@ -535,18 +561,32 @@
                         <!-- Phone frame -->
                         <div class="relative">
                             <!-- Phone body -->
-                            <div class="phone-body bg-gradient-to-b from-slate-800 to-slate-900 rounded-[2rem] p-2 shadow-2xl">
+                            <div class="phone-body bg-gradient-to-b from-gray-800 to-gray-900 rounded-[2.5rem]">
+                                <!-- Notch removed for cleaner display -->
+                                
                                 <!-- Screen -->
-                                <div class="phone-screen bg-black rounded-[1.5rem] overflow-hidden relative">
-                                    <!-- Solar system screenshot -->
-                                    <img src="assets/solar-system.png" 
-                                         alt="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings against deep space background"
-                                         class="w-full h-full object-cover"
-                                         loading="eager">
+                                <div class="phone-screen bg-black rounded-[2.2rem] overflow-hidden relative">
+                                    <!-- Solar system animation -->
+                                    <video autoplay muted loop playsinline 
+                                           class="w-full h-full object-cover"
+                                           poster="assets/solar-system.png"
+                                           aria-label="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings spinning against deep space background">
+                                        <source src="assets/solar-system-web.mp4" type="video/mp4">
+                                        <source src="assets/solar-system.mov" type="video/quicktime">
+                                        <!-- Fallback image if video fails to load -->
+                                        <img src="assets/solar-system.png" 
+                                             alt="Orbital app galaxy view showing diverse colorful planets including blue earth-like, cyan, purple spotted, and green planets with orbital rings spinning against deep space background"
+                                             class="w-full h-full object-cover"
+                                             loading="eager">
+                                    </video>
                                     
                                     <!-- Screen overlay for realism -->
                                     <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-white/5 pointer-events-none"></div>
                                 </div>
+                                
+                                <!-- iPhone-style home indicator -->
+                                <div class="phone-home-indicator"></div>
+                            </div>
                             </div>
                             
                             <!-- Phone glow effect -->

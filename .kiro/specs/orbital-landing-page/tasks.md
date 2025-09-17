@@ -23,7 +23,7 @@
   - Add subtle glow effects and float animation to phone mockup
   - _Requirements: 1.3, 1.5, 2.4, 2.6_
 
-- [ ] 4. Add store badges and call-to-action elements
+- [x] 4. Add store badges and call-to-action elements
   - Implement official Google Play and App Store badges using proper SVG assets
   - Link Google Play badge to correct URL (https://play.google.com/store/apps/details?id=com.ra.orbital)
   - Add placeholder link for App Store badge
